@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bubble Game</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <style>
+        body {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        #start {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+        }
+
+        .bubble {
+            height: 30px;
+            width: 30px;
+            position: absolute;
+            border-radius: 50%;
+            text-align: center;
+            font-size: large;
+        }
+    </style>
+</head>
+
+<body>
+    <button id="start">START</button>
+    <script>
+        $(document).ready(function () {
+            let screenWidth = screen.width - 200;
+            let screenHeight = screen.height - 200;
+            let set;
+            $("#start").click(function () {
+                $(this).hide();
+                set = setInterval(createBubble, 500);
+
+            });
+            function createBubble() {
+                let bubble = $('<div class="bubble"></div>');
+                bubble.text(generateAlphabet());
+                bubble.css({ left: Math.random() * screenWidth + 'px', top: Math.random() * screenHeight + 'px', backgroundColor: generateColor() });
+                bubble.animate({ top: screenHeight + 'px' }, 3000, function () {
+                    $(this).hide();
+                });
+
+                $('body').append(bubble);
+
+            }
+            function generateAlphabet() {
+                var alpha = Math.floor(Math.random() * 26) + 65;
+                return String.fromCharCode(alpha);
+            }
+            function generateColor() {
+                var letter = "1234567890ABCDEF";
+                var colour = "#";
+                for (var i = 0; i < 6; i++) {
+                    colour += letter[Math.floor(Math.random() * 16)];
+                }
+                return colour;
+            }
+        });
+    </script>
+</body>
+
+</html>
