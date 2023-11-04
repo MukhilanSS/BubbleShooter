@@ -1,0 +1,197 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta
+name="viewport" content="width=device-width, initial-scale=1.0"> <link
+rel="icon" href="bub.jpg"> <link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+crossorigin="anonymous"> <script
+src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<title>BUBBLE SHOOTER</title>
+    
+    <style>
+        body,html{
+            margin:0%;
+            padding: 0%;
+            background-color: #caf0f8;
+            /* background-image: url("bubble.jpg"); */
+            height: 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        #score{
+            display: none;  
+            position: absolute;
+            bottom: 10%;
+            right: 5%;
+        }
+        #start{
+            position: absolute;
+            left: 45%;
+            top: 45%;
+            color: rgb(0, 0, 0);
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 12px;
+        }
+        .bubble{
+            height: 30px;
+            width: 30px;
+            border-radius: 50%;
+            position: absolute;
+            text-align: center;
+            font-size: large;
+        }
+        #timer{
+            position: absolute;
+            right: 5%;
+            bottom: 0%;
+        }
+
+        #head{
+            font-size: 40px;
+            
+            padding-bottom: 20px;
+            text-align: center;
+            position: absolute;
+            top: 30%;
+            left: 33%;
+            font-family: Luminari, monospace;
+
+        
+        }
+        #gameover {
+            position: "absolute";
+            left: "40%";
+            top: "40%";
+            display: none;
+            font-family: Luminari, monospace;
+        }
+        .btn-xl {
+        font-size: 24px;
+        padding: 20px 40px;
+        
+            }
+        #restart {
+            display: none;
+            position: absolute;
+            left: 45%;
+            top: 45%;
+            text-decoration: none;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 12px;
+        }
+
+    </style>
+</head>
+<body>
+    <h2 id="score">Score:</h2> 
+    <h1 id="head"><b>LET'S PLAY BUBBLE SHOOTER</b></h1>
+    <h2 id="timer"></h2>
+    <h2 id="gameover"></h2>
+    <button type="button" class="btn btn-outline-success  btn-xl " id="start">START</button>
+    <button type="button" class="btn btn-outline-warning  btn-xl " id="restart" style="display: none;">RESTART</button>
+    <script>
+        $(document).ready(function(){
+                let width=screen.width-200;
+                let height=screen.height-200;
+                let set;
+                let remove;
+                let gameArray=[];
+                let score=0;
+                let index;
+                let value;
+                let gameTime=10;
+            
+            $("#start").click(function(){
+                $(this).fadeOut('slow');
+                $('#head').hide();
+                
+                $('#score').show();
+                $('body').css({'backgroundColor':'#cfbaf0'});
+                set=setInterval(createBubble,500);
+                timeInterval = setInterval(updateTimer, 1000);
+                remove=setInterval(removeBubble,1000);
+            });
+                function createBubble(){
+                    let bubble=$('<div class="bubble"></div>');
+                    bubble.text(generateAlphabet());
+                    bubble.css({left:Math.random()*width+'px',top:Math.random()*height+'px',backgroundColor:generateColor()});    
+                    bubble.animate({top:height+'px'},3000,function(){
+                        $(this).hide();
+                    });
+                    $('body').append(bubble);     
+                }
+                function generateColor(){
+                    let letter='1234567890ABCDEF';
+                    let color='#'
+                    let i;
+                    for(i=0;i<6;i++){
+                        color+=letter[Math.floor(Math.random()*16)];
+                    }
+                    return color;
+                }
+                function generateAlphabet(){
+                    let alpha=Math.floor(Math.random()*24+65);
+                    gameArray.push(alpha);
+                    return String.fromCharCode(alpha);
+                }
+                function removeBubble(){
+                    if(gameArray>0){
+                        gameArray.shift();
+                    }
+                }
+                function updateTimer() {
+                $("#timer").html("<h3> Time Left:" + gameTime + "</h3>");
+                gameTime--;
+                if (gameTime < 0) {
+                    clearInterval(timeInterval);
+                    endGame();
+                }
+            }
+            function endGame(){
+                clearInterval(set);
+                clearInterval(remove);
+                $("#timer").fadeOut('slow');
+                $('#score').fadeOut('slow');
+                $('#gameover').html("<h4><b>Game Over......!!!!<b><br><br> Your Points: "+score+"</h4>");
+                $('#gameover').css({position:"absolute",left:"40%",top:"20%",display:"block"});
+                $("#restart").show();
+            $("#restart").css("display", "inline-block");
+
+            }
+           
+            $("#restart").click(function () {
+                score = 0;
+                gameArray = [];
+                gameTime = 10;
+                $('body').css({'backgroundColor':'#d0f4de'})
+                $(this).hide();
+                $("#gameover").hide();
+                $("#timer").show();
+                $("#timer").html("<h3>" + gameTime + "</h3>");
+                $("#score").show();
+                $('#score').html("<h4>Score: " + score + "</h4>");
+                set = setInterval(createBubble, 500);
+                timeInterval = setInterval(updateTimer, 1000);
+                remove = setInterval(removeBubble, 1000);
+            });
+            $(document).keydown(function(event){
+                 value= event.which;
+                if(gameArray.includes(value)){
+                    score++;
+                    $('#score').html("<h4>Score: " + score + "</h4>");
+                     index = gameArray.indexOf(value);
+                    if (index !== -1) {
+                        gameArray.splice(index, 1);
+                }
+            }   
+            });
+        });
+    </script>
+</body>
+</html>
